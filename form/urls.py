@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import UploadView
+from . import views
 
 urlpatterns = [
-    path("form/", UploadView.as_view()),
+    path("transactions/", views.home_form)
 ]

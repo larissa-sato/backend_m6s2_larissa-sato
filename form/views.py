@@ -1,21 +1,16 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from .forms import UploadForm
-from rest_framework.decorators import APIView
+from .services import handle_uploaded
 
 
-def handler_upload(el):
-    with open('challenge_backend-s2/cnab.txt', 'wb+') as destination:
-        for chunk in el.chunks():
-            destination.write(chunk)
-
-class UploadView(APIView):
-    def upload(req):
-        if req.method == 'POST':
-            form = UploadForm(req.POST, req.FILES)
-            if form.is_valid():
-                handler_upload(req.FILES['file'])
-                return HttpResponseRedirect('/success/url/')
-        else:
+def home_form(req):
+    if req.method == 'GET':
+        form = UploadForm()
+        return render(req, 'model_form.html', {'form': form})
+    else:
+        form = UploadForm(req.POST, req.FILES)
+        if form.is_valid():
+            handle_uploaded(req.FILES['file'])
             form = UploadForm()
-        return render(req, 'upload.html', {'form': form})
+            return render(req, 'model_form.html', {'form': form})  
